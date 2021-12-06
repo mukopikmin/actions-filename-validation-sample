@@ -37,10 +37,10 @@ jobs:
 
       - name: Show github properties
         run: | 
-          echo ${{ github.workflow }}
+          echo ${{ github.base_ref }}
           echo ${{ github.ref }}
-          echo ${{ github.sha }}
-          
+          echo ${{ github.head_ref }}
+
       - name: Debug github.sha
         run: |
           git diff --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
