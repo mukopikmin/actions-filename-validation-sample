@@ -23,9 +23,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        with:
-          ref: ${{github.base_ref}}
-          # ref: ${{github.event.pull_request.head.ref}}
+      - run: |
+          git fetch --no-tags --depth=1 origin master
+          git checkout -b ${{ github.base_ref }}
+          git checkout ${{ github.event.pull_request.head.sha }}
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
