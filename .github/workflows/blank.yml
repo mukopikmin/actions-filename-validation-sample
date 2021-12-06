@@ -35,6 +35,12 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
 
+      - name: Show github properties
+        run: | 
+          echo ${{ github.workflow }}
+          echo ${{ github.ref }}
+          echo ${{ github.sha }}
+          
       - name: Debug github.sha
         run: |
           git diff --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
