@@ -38,7 +38,7 @@ jobs:
       - name: Show github properties
         run: | 
           echo ${{ github.base_ref }}
-          echo ${{ github.ref }}
+          echo ${{ github.sha }}
           echo ${{ github.head_ref }}
 
       - name: Debug github.sha
