@@ -5,6 +5,9 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - '*'
@@ -21,35 +24,36 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - run: |
-          set -x
-          git fetch --no-tags --depth=1 origin ${{ github.base_ref }}
-          git checkout -b ${{ github.base_ref }}
-          git switch ${{ github.event.pull_request.head.sha }}
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
+        with:
+          ruby-version: 2.7
+        # no need to specify `fetch-depth`, let it default to most recent commit only.
+      - name: Fetch and Diff PR with base from which it was cloned
+        # git fetch will fail if ${{ github.event.pull_request.base.sha }} is not set.
+        # ${{ github.event.pull_request.base.sha }} WILL be set for event `pull_request`
+        if: ${{ github.event.pull_request.base.sha }}  
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          git fetch origin ${{ github.base_ref }} ${{ github.event.pull_request.base.sha }}
+          git branch
+          mkdir ${{ github.base_ref }}
+          cp files/* ${{ github.base_ref }}/
 
-      - name: Show github properties
-        run: | 
-          echo ${{ github.base_ref }}
-          echo ${{ github.sha }}
-          echo ${{ github.head_ref }}
-
-
-      - name: Show github properties
+          git branch
+          git checkout ${{ github.event.pull_request.base.sha }}
+          cp files/* ${{ github.event.pull_request.base.sha }}
+      - name: ruby
         run: |
-          git diff ${{ github.base_ref }} ${{ github.event.pull_request.head.sha }}
+          ruby -e ruby -e "
+            require 'digest/md5'
 
-      - name: Debug github.sha
-        run: |
-          git diff --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
+            files1 = Dir.glob('files1/*').map { |f| File.basename(f) }
+            files2 = Dir.glob('files2/*').map { |f| File.basename(f) }
+            files = files1.concat(files2)
+
+            files.map { |f| f.split('_') }
+                .each_with_object({}) { |cur, acc| acc[cur[0]] = [*acc[cur[0]], cur[1]].uniq }
+                .filter { |_k, v| v.size != 1 }
+                .each { |k, v| p \"Duplicate file #{k}_#{v[0]}\" }
+          "
