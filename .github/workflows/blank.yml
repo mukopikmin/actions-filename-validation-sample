@@ -24,7 +24,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - run: |
-          git fetch --no-tags --depth=1 origin master
+          git fetch --no-tags --depth=1 origin ${{ github.base_ref }}
           git checkout -b ${{ github.base_ref }}
           git checkout ${{ github.event.pull_request.head.sha }}
 
@@ -47,7 +47,7 @@ jobs:
 
       - name: Show github properties
         run: |
-          git diff ${{ github.base_ref }}
+          git diff ${{ github.base_ref }} ${{ github.event.pull_request.head.sha }}
 
       - name: Debug github.sha
         run: |
