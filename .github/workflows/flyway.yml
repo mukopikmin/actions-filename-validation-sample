@@ -9,7 +9,7 @@ on:
     branches:
       - "*"
   pull_request:
-    types: [opened, synchronize, edited, reopened]
+    types: [opened, synchronize, reopened, ready_for_review, unlabeled, closed]
     branches:
       - "main"
 
