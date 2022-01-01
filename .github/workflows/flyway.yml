@@ -5,12 +5,13 @@ name: Check
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-      - main
+  # push:
+  # branches:
+  #   - "*"
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, unlabeled, closed]
     branches:
-      - "*"
+      - "main"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,15 +26,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: branch
-        run: git branch
-      - name: merge
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
-          git fetch && git merge origin/main #--allow-unrelated-histories
       - name: branch
         run: git branch
       - name: Install CLI
