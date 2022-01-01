@@ -5,12 +5,12 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - '*'
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - "*"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
       - name: Fetch and Diff PR with base from which it was cloned
         # git fetch will fail if ${{ github.event.pull_request.base.sha }} is not set.
         # ${{ github.event.pull_request.base.sha }} WILL be set for event `pull_request`
-        if: ${{ github.event.pull_request.base.sha }}  
+        if: ${{ github.event.pull_request.base.sha }}
         run: |
           git fetch origin ${{ github.base_ref }} ${{ github.event.pull_request.base.sha }}
           git branch

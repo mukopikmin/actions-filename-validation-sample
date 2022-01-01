@@ -25,6 +25,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: branch
+        run: git branch
+      - name: merge
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git fetch && git merge origin/main #--allow-unrelated-histories
       - name: branch
         run: git branch
       - name: Install CLI
